@@ -1,0 +1,27 @@
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+
+#actuator
+management:
+  endpoint:
+    shutdown:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude: env, beans
+
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/eris
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+
+server:
+  error:
+    include-message: always
