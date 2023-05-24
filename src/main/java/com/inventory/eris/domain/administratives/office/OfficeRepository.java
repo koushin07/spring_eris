@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -38,16 +36,16 @@ public class OfficeRepository implements OfficeDao {
     }
 
     @Override
-    public Office saveOffice(Office office) {
-        var insert = new SimpleJdbcInsert(jdbcTemplate).withTableName("offices").usingGeneratedKeyColumns("id");
-        var parameters = new MapSqlParameterSource()
-                .addValue("email", office.getEmail())
-                .addValue("password", office.getPassword())
-                .addValue("contact", office.getContact())
-                .addValue("role_type", office.getRole().getRoleType().toString());
-        var key = insert.executeAndReturnKey(parameters);
-        office.setId(key.longValue());
-        return office;
+    public int saveOffice(Office office) {
+        var sql = """
+                INSERT INTO offices(assign_office_id, role_id, email, password, contact) VALUES(?, ?, ?, ?)
+                """;
+        return jdbcTemplate.update(sql,
+                office.getEmail(),
+                office.getPassword(),
+                office.getContact(),
+                office.getRole().getRoleType().toString()
+                 );
     }
 
     @Override

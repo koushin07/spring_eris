@@ -19,7 +19,7 @@ public class MunicipalityRepository implements MunicipalityDao{
                 VALUES(?, ?, ?, ?)
                 """;
         jdbcTemplate.update(sql,
-                municipality.getProvinceId(),
+                municipality.getProvince().getProvinceId(),
                 municipality.getMunicipalityName(),
                 municipality.getLatitude(),
                 municipality.getLatitude()
@@ -31,7 +31,7 @@ public class MunicipalityRepository implements MunicipalityDao{
     @Override
     public Optional<Municipality> selectMunicipality(Long id) {
         var sql = """
-                SELECT * FROM municipalities WHERE municipality_id = ?
+                SELECT * FROM municipalities JOIN provinces ON provinces.province_id = municipalities.province_id WHERE municipality_id = ?
                 """;
         return jdbcTemplate.query(sql,  new MunicipalityRowMapper(), id).stream().findFirst();
     }

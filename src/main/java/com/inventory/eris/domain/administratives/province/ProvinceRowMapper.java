@@ -1,5 +1,6 @@
 package com.inventory.eris.domain.administratives.province;
 
+import com.inventory.eris.domain.administratives.region.Region;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -13,7 +14,11 @@ public class ProvinceRowMapper implements RowMapper<Province> {
         return new Province(
           rs.getLong("province_id"),
           ProvinceEnum.valueOf(rs.getString("province_name")),
-                rs.getLong("region_id"),
+                Region.builder()
+                        .regionId(rs.getLong("region_id"))
+                        .regionName("region_name")
+                        .createdAt(null)
+                        .build(),
                 rs.getTimestamp("created_at").toLocalDateTime()
           );
 

@@ -12,7 +12,7 @@ public class MunicipalityServiceImp implements MunicipalityService{
     private final MunicipalityDao municipalityDao;
     @Override
     public Municipality saveMunicipality(Municipality municipality) {
-        return municipalityDao.saveMunicipality(municipality)
+        return municipalityDao.saveMunicipality(municipality);
     }
 
     @Override

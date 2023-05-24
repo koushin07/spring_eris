@@ -1,0 +1,54 @@
+package com.inventory.eris.domain.administratives.officepersonnel;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+@RequiredArgsConstructor
+public class OfficePersonnelRepository implements OfficePersonnelDao{
+
+    private final JdbcTemplate jdbcTemplate;
+    @Override
+    public int saveOfficePersonnel(OfficePersonnel officePersonnel) {
+        var sql = """
+                INSERT INTO office_personnel(office_id, personnel_id, is_active)
+                VALUES(?, ?, ?)
+                """;
+        return jdbcTemplate.update(sql,
+                officePersonnel.getOffice().getOfficeId(),
+                officePersonnel.getPersonnel().getPersonnelId(),
+                officePersonnel.isActive() ? 1 : 0
+                );
+    }
+
+    @Override
+    public Optional<OfficePersonnel> selectOfficePersonnelById(Long id) {
+        var sql = """
+                SELECT
+                    op.office_personnel_id,
+                    op.created_at,
+                    op.updated_at,
+                    o.office_id,
+                    o.role_id,
+                    o.contact,
+                    o.assign_office_id,
+                    o.created_at as office_created_at,
+                    o.updated_at as office_updated_at,
+                    p.personnel_id,
+                    p.first_name,
+                    p.last_name,
+                    p.suffix,
+                    p.middle_name,
+                    p.created_at as personnel_created_at,
+                    p.updated_at as personnel_updated_at
+                FROM office_personnel op
+                JOIN offices o ON o.office_id = op.office_id
+                JOIN personnel p ON p.personnel_id = op.personnel_id
+                WHERE op.office_personnel_id = ?
+                """;
+        return jdbcTemplate.query(sql, new OfficePersonnelRowMapper(), id).stream().findFirst();
+    }
+}

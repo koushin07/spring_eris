@@ -24,19 +24,32 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     /**
+     *
      * @param request
      * @return status 200 authentication response
-     * @Responsibility Register User
+     * @apiNote Municipality Registration
+     */
+    @PostMapping("/municipality-registration")
+    public ResponseEntity<Void> municipalityRegistration(@RequestBody @Valid MunicipalityRegistrationRequest request ){
+        if(!authenticationService.MunicipalityRegister(request)){
+            return notFound().build();
+        }
+        return ok().build();
+//        return ok(authenticationService.MunicipalityRegister(request));
+
+    }
+
+    /**
+     * @param request
+     * @return status 200 authentication response
+     * @apiNote  Province Registration
      */
     @PostMapping("/province-registration")
     public ResponseEntity<AuthenticationResponse> provinceRegistration(@RequestBody @Valid ProvinceRegistrationRequest request) {
-        return ok(authenticationService.ProvinceRegister(request));
-    }
-
-    @PostMapping("/municipality-registration")
-    public ResponseEntity<AuthenticationResponse> municipalityRegistration(@RequestBody @Valid MunicipalityRegistrationRequest request ){
-        return ok(authenticationService.MunicipalityRegister(request));
-
+        if(!authenticationService.ProvinceRegister(request)){
+            return notFound().build();
+        }
+        return ok().build();
     }
 
 

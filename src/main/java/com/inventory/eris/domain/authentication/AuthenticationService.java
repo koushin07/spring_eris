@@ -8,8 +8,8 @@ public interface AuthenticationService {
 
     AuthenticationResponse refreshToken(AuthenticationRefreshTokenRequest request);
 
-    AuthenticationResponse ProvinceRegister(ProvinceRegistrationRequest request);
+    boolean ProvinceRegister(ProvinceRegistrationRequest request);
 
-    AuthenticationResponse MunicipalityRegister(MunicipalityRegistrationRequest request);
+    boolean MunicipalityRegister(MunicipalityRegistrationRequest request);
 
 }

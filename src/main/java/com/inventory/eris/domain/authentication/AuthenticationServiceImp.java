@@ -2,7 +2,11 @@ package com.inventory.eris.domain.authentication;
 
 import java.util.Optional;
 
+import com.inventory.eris.domain.administratives.Personnel.Personnel;
+import com.inventory.eris.domain.administratives.assignoffice.AssignOffice;
+import com.inventory.eris.domain.administratives.assignoffice.AssignOfficeDao;
 import com.inventory.eris.domain.administratives.office.OfficeDao;
+import com.inventory.eris.domain.administratives.role.RoleDao;
 import com.inventory.eris.domain.administratives.role.RoleType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +28,10 @@ import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.inventory.eris.domain.administratives.role.RoleType.RDRRMC_MUNICIPALITY;
+import static java.lang.Boolean.TRUE;
+import static java.lang.Boolean.FALSE;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -36,6 +44,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
         private final RoleDaoImp roleDaoImp;
         private final UserDetailsService userDetailsService;
         private final BlacklistService blackListService;
+        private final AssignOfficeDao assignOfficeDao;
+        private final RoleDao roleDao;
 
         @Override
         public AuthenticationResponse register(RegisterRequest request) {
@@ -71,7 +81,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 OfficeResponse response = OfficeResponse.builder()
                                 .contact(office.getContact())
                                 .email(office.getEmail())
-                                .id(office.getId())
+                                .id(office.getOfficeId())
                                 .role(office.getRole())
                                 .build();
                 String jwtToken = jwtService.generateToken(office);
@@ -101,7 +111,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 OfficeResponse response = OfficeResponse.builder()
                                 .contact(office.getContact())
                                 .email(office.getEmail())
-                                .id(office.getId())
+                                .id(office.getOfficeId())
                                 .role(office.getRole())
                                 .build();
                 return AuthenticationResponse.builder()
@@ -112,43 +122,50 @@ public class AuthenticationServiceImp implements AuthenticationService {
         }
 
         @Override
-        public AuthenticationResponse ProvinceRegister(ProvinceRegistrationRequest request) {
+        public boolean ProvinceRegister(ProvinceRegistrationRequest request) {
                 /* checking if email exist */
                 if (officeRepository.findByEmail(request.getEmail()).isPresent()) {
                         throw new EmailExistException("this email is already taken");
                 }
 
-                Optional<Role> role = roleDaoImp.findByRoleType(request.getRole().getRoleType().name());
-                Office office = Office.builder()
-                        .email(request.getEmail())
-                        .contact(request.getContact())
-                        .password(passwordEncoder.encode(request.getPassword()))
-                        .role(role.get())
-                        .build();
-                officeRepository.saveOffice(office);
-                String jwtToken = jwtService.generateToken(office);
+                return TRUE;
 
-                return AuthenticationResponse.builder().AccessToken(jwtToken).build();
         }
 
+        /**
+         * TODO: check if email exist check and assign office MUNICIPALITY
+         *
+         * @param request
+         * @return
+         */
         @Override
-        public AuthenticationResponse MunicipalityRegister(MunicipalityRegistrationRequest request) {
+        public boolean MunicipalityRegister(MunicipalityRegistrationRequest request) {
                 /* checking if email exist */
                 if (officeRepository.findByEmail(request.getEmail()).isPresent()) {
                         throw new EmailExistException("this email is already taken");
                 }
 
+                /*  check and assign office  */
+                AssignOffice assignOffice = assignOfficeDao.selectAssignByMunicipalityId(request.getMunicipality().getMunicipalityId())
+                        .orElseThrow(()-> new RuntimeException("this office is not found"));
 
-                Office office = Office.builder()
-                        .email(request.getEmail())
+                /*  check and assign role  */
+                Role role = roleDao.findByRoleType(RDRRMC_MUNICIPALITY.name())
+                        .orElseThrow(() -> new RuntimeException("this role type is not found"));
+
+                Office municipality = Office.builder()
                         .contact(request.getContact())
-                        .password(passwordEncoder.encode(request.getPassword()))
-                        .role( Role.builder().roleType(RoleType.RDRRMC_MUNICIPALITY).build())
+                        .email(request.getEmail())
+                        .assignOffice(assignOffice)
+                        .role(role)
                         .build();
-                officeRepository.saveOffice(office);
-                String jwtToken = jwtService.generateToken(office);
+              int saved = officeRepository.saveOffice(municipality);
+                if(saved == 0){
+                        return false;
+                }
 
-                return AuthenticationResponse.builder().AccessToken(jwtToken).build();
+                return true;
+
         }
 
 }

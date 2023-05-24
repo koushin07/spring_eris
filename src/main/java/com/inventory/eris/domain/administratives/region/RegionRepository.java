@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -28,5 +29,13 @@ public class RegionRepository implements RegionDao{
                 SELECT * FROM regions WHERE regions.id = ?
                 """;
         return jdbcTemplate.query(sql, new RegionRowMapper(), id).stream().findFirst();
+    }
+
+    @Override
+    public List<Region> selectAllRegion() {
+        var sql = """
+                SELECT * FROM regions
+                """;
+        return jdbcTemplate.query(sql, new RegionRowMapper());
     }
 }

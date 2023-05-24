@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+import com.inventory.eris.domain.administratives.assignoffice.AssignOffice;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,13 +22,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Office implements UserDetails {
 
-    private Long id;
+    private Long officeId;
 
     private String email;
 
     private String password;
 
     private String contact;
+
+    private AssignOffice assignOffice;
 
     private Role role;
 

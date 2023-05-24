@@ -1,5 +1,6 @@
 package com.inventory.eris.domain.administratives.province;
 
+import com.inventory.eris.domain.administratives.region.Region;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 public class Province {
     private Long provinceId;
     private ProvinceEnum provinceName;
-    private Long regionId;
+    private Region region;
     private LocalDateTime createdAt;
 
 }

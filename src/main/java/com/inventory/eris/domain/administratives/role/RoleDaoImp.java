@@ -18,9 +18,10 @@ public class RoleDaoImp implements RoleDao {
 
     @Override
     public Role saveRole(Role role) {
-        new SimpleJdbcInsert(jdbcTemplate).withTableName("roles").usingGeneratedKeyColumns("id");
-        new MapSqlParameterSource()
-                .addValue("email", role.getRoleType().name());
+        var sql = """
+                INSERT INTO roles(role_type) VALUES(?)
+                """;
+        jdbcTemplate.update(sql, role.getRoleType().name());
         return role;
     }
 

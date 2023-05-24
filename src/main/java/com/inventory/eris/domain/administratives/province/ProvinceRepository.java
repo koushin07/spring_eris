@@ -18,7 +18,7 @@ public class ProvinceRepository implements ProvinceDao{
         var insert = new SimpleJdbcInsert(jdbcTemplate).withTableName("offices").usingGeneratedKeyColumns("id");
         var parameters = new MapSqlParameterSource()
                 .addValue("province_name", province.getProvinceName())
-                .addValue("region_id", province.getRegionId());
+                .addValue("region_id", province.getRegion().getRegionId());
         var key = insert.executeAndReturnKey(parameters);
         province.setProvinceId(key.longValue());
         return province;
@@ -27,7 +27,7 @@ public class ProvinceRepository implements ProvinceDao{
     @Override
     public Optional<Province> selectProvince(Long id) {
         var sql = """
-                SELECT * FROM provinces WHERE provinces.id = ?
+                SELECT * FROM provinces JOIN regions ON regions.region_id = provinces.region_id WHERE provinces.id = ? 
                 """;
         return jdbcTemplate.query(sql, new ProvinceRowMapper(), id).stream().findFirst();
     }

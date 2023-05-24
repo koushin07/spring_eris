@@ -3,6 +3,7 @@ package com.inventory.eris.domain.administratives.office;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.inventory.eris.domain.administratives.assignoffice.AssignOffice;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.lang.Nullable;
 
@@ -18,6 +19,9 @@ public class OfficeRowMapper implements RowMapper<Office> {
                 result.getString("email"),
                 result.getString("password"),
                 result.getString("contact"),
+                AssignOffice.builder()
+                        .assignOfficeId(result.getLong("assign_office_id"))
+                        .build(),
                 new Role(RoleType.valueOf(result.getString("role_type"))),
                 result.getTimestamp("created_at").toLocalDateTime() != null
                         ? result.getTimestamp("created_at").toLocalDateTime()

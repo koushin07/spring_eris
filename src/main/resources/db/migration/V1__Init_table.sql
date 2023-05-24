@@ -54,8 +54,8 @@ CREATE TABLE offices (
     FOREIGN KEY (assign_office_id) REFERENCES assign_offices(assign_office_id)
 );
 
-CREATE TABLE users (
-    user_id SERIAL PRIMARY KEY,
+CREATE TABLE personnel (
+    personnel_id SERIAL PRIMARY KEY,
     first_name VARCHAR(225) NOT NULL,
     last_name VARCHAR(225) NOT NULL,
     suffix VARCHAR(225),
@@ -65,16 +65,16 @@ CREATE TABLE users (
     deleted_at TIMESTAMP
 );
 
-CREATE TABLE office_user (
-    office_user_id SERIAL PRIMARY KEY,
+CREATE TABLE office_personnel (
+    office_personnel_id SERIAL PRIMARY KEY,
     office_id BIGINT NOT NULL,
-    user_id BIGINT NOT NULL,
+    personnel_id BIGINT NOT NULL,
     is_active INT DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP,
     FOREIGN KEY (office_id) REFERENCES offices(office_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    FOREIGN KEY (personnel_id) REFERENCES personnel(personnel_id)
 );
 ------------- END OF ADMINISTRATIVE AREA -----------------------
 
