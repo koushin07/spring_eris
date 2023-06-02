@@ -1,4 +1,4 @@
-package com.inventory.eris.Exception;
+package com.inventory.eris.utils.Exception;
 
 public class EmailExistException extends RuntimeException {
     public EmailExistException() {

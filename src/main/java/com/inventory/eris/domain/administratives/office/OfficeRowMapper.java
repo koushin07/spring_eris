@@ -15,22 +15,19 @@ public class OfficeRowMapper implements RowMapper<Office> {
     @Override
     @Nullable
     public Office mapRow(ResultSet result, int i) throws SQLException {
-        return new Office(result.getLong("id"),
+        return new Office(result.getLong("office_id"),
                 result.getString("email"),
                 result.getString("password"),
                 result.getString("contact"),
                 AssignOffice.builder()
                         .assignOfficeId(result.getLong("assign_office_id"))
                         .build(),
-                new Role(RoleType.valueOf(result.getString("role_type"))),
+                new Role(result.getLong("role_id"),RoleType.valueOf(result.getString("role_type"))),
                 result.getTimestamp("created_at").toLocalDateTime() != null
                         ? result.getTimestamp("created_at").toLocalDateTime()
                         : null,
                 result.getTimestamp("updated_at").toLocalDateTime() != null
                         ? result.getTimestamp("updated_at").toLocalDateTime()
-                        : null,
-                result.getTimestamp("deleted_at").toLocalDateTime() != null
-                        ? result.getTimestamp("deleted_at").toLocalDateTime()
                         : null);
     }
 

@@ -12,12 +12,10 @@ public class PersonnelServiceImp implements PersonnelService{
 
     private final PersonnelDao personnelDao;
     @Override
-    public boolean savePersonnel(Personnel personnel) {
+    public Personnel savePersonnel(Personnel personnel) {
 
-        int saved = personnelDao.savePersonnel(personnel);
-        if(saved == 0) return false;
+        return   personnelDao.savePersonnel(personnel);
 
-        return true;
 
     }
 

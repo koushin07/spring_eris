@@ -17,7 +17,7 @@ public class MunicipalityRowMapper implements RowMapper<Municipality> {
                 rs.getDouble("longitude"),
                 Province.builder()
                         .provinceId(rs.getLong("province_id"))
-                        .provinceName(ProvinceEnum.valueOf(rs.getString("province_name")))
+                        .provinceName(rs.getString("province_name"))
                         .createdAt(null)
                         .build()
         );

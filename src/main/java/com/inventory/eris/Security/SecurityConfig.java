@@ -28,10 +28,11 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**", "/testing", "/actuator", "/actuator/**", "/swagger-ui/**",
+                .requestMatchers("/api/v1/auth/**", "/testing", "/actuator", "/api/v1/provinces", "/actuator/**", "/swagger-ui/**",
                         "/v3/api-docs/**",
-                        "/socmed/swagger-ui.html")
+                        "/api/v1/assign-offices")
                 .permitAll()
+//                .requestMatchers("/api/municipalities").hasAuthority("RDRRMC_MUNICIPALITY")
                 .anyRequest()
                 .authenticated()
                 .and()

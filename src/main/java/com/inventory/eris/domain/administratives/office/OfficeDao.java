@@ -9,9 +9,9 @@ public interface OfficeDao {
 
     Optional<Office> selectoffice(Long id);
 
-    int saveOffice(Office office);
+    Office saveOffice(Office office);
 
-    Office updateOffice(Long id, Office office);
+    void updateOffice( Office office);
 
     void deleteOffice(Long id);
 

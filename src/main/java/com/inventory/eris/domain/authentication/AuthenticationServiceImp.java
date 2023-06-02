@@ -3,11 +3,17 @@ package com.inventory.eris.domain.authentication;
 import java.util.Optional;
 
 import com.inventory.eris.domain.administratives.Personnel.Personnel;
+import com.inventory.eris.domain.administratives.Personnel.PersonnelDao;
 import com.inventory.eris.domain.administratives.assignoffice.AssignOffice;
 import com.inventory.eris.domain.administratives.assignoffice.AssignOfficeDao;
+import com.inventory.eris.domain.administratives.municipality.Municipality;
+import com.inventory.eris.domain.administratives.municipality.MunicipalityDao;
 import com.inventory.eris.domain.administratives.office.OfficeDao;
+import com.inventory.eris.domain.administratives.officepersonnel.OfficePersonnel;
+import com.inventory.eris.domain.administratives.officepersonnel.OfficePersonnelDao;
+import com.inventory.eris.domain.administratives.province.Province;
+import com.inventory.eris.domain.administratives.province.ProvinceDao;
 import com.inventory.eris.domain.administratives.role.RoleDao;
-import com.inventory.eris.domain.administratives.role.RoleType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,63 +21,46 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.inventory.eris.Exception.EmailExistException;
-import com.inventory.eris.Exception.ResourceNotFoundException;
+import com.inventory.eris.utils.Exception.EmailExistException;
+import com.inventory.eris.utils.Exception.ResourceNotFoundException;
 import com.inventory.eris.Security.JWT.JwtService;
 import com.inventory.eris.Security.JWT.blacklist.BlacklistService;
 import com.inventory.eris.domain.administratives.office.Office;
 import com.inventory.eris.domain.administratives.office.OfficeResponse;
 import com.inventory.eris.domain.administratives.role.Role;
-import com.inventory.eris.domain.administratives.role.RoleDaoImp;
 
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.inventory.eris.domain.administratives.role.RoleType.RDRRMC_MUNICIPALITY;
-import static java.lang.Boolean.TRUE;
-import static java.lang.Boolean.FALSE;
+import static com.inventory.eris.domain.administratives.role.RoleType.RDRRMC_PROVINCE;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class AuthenticationServiceImp implements AuthenticationService {
 
-        private final OfficeDao officeRepository;
+        private final OfficeDao officeDao;
         private final PasswordEncoder passwordEncoder;
         private final JwtService jwtService;
         private final AuthenticationManager authenticationManager;
-        private final RoleDaoImp roleDaoImp;
         private final UserDetailsService userDetailsService;
         private final BlacklistService blackListService;
         private final AssignOfficeDao assignOfficeDao;
         private final RoleDao roleDao;
+        private final MunicipalityDao municipalityDao;
+        private final ProvinceDao provinceDao;
+        private final PersonnelDao personnelDao;
+        private final OfficePersonnelDao officePersonnelDao;
 
-        @Override
-        public AuthenticationResponse register(RegisterRequest request) {
 
-                /* checking if email exist */
-                if (officeRepository.findByEmail(request.getEmail()).isPresent()) {
-                        throw new EmailExistException("this email is already taken");
-                }
-
-                Optional<Role> role = roleDaoImp.findByRoleType(request.getRole().getRoleType().name());
-                Office office = Office.builder()
-                                .email(request.getEmail())
-                                .contact(request.getContact())
-                                .password(passwordEncoder.encode(request.getPassword()))
-                                .role(role.get())
-                                .build();
-                officeRepository.saveOffice(office);
-                String jwtToken = jwtService.generateToken(office);
-
-                return AuthenticationResponse.builder().AccessToken(jwtToken).build();
-        }
 
         @Override
         public AuthenticationResponse authenticate(AuthenticationRequest request) {
                 log.info("authenticating.........");
-                Office office = officeRepository.findByEmail(request.getEmail())
+                Office office = officeDao.findByEmail(request.getEmail())
                                 .orElseThrow(() -> new ResourceNotFoundException("username not found"));
                 authenticationManager
                                 .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),
@@ -92,6 +81,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
                                 .refreshToken(refresher)
                                 .OfficeResponse(response).build();
 
+
         }
 
         @Override
@@ -99,7 +89,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 blackListService.blackListToken(request.getAccessToken());
 
                 log.info("request value is \n " + request);
-                Office office = officeRepository.findByEmail(request.getEmail())
+                Office office = officeDao.findByEmail(request.getEmail())
                                 .orElseThrow(() -> new ResourceNotFoundException("office is not found"));
                 UserDetails userDetails = userDetailsService.loadUserByUsername(office.getUsername());
                 log.info(userDetails.getUsername());
@@ -121,51 +111,106 @@ public class AuthenticationServiceImp implements AuthenticationService {
                                 .build();
         }
 
+        /**
+         *
+         * @param request
+         * @return void
+         *
+         */
         @Override
-        public boolean ProvinceRegister(ProvinceRegistrationRequest request) {
+        public void ProvinceRegister(ProvinceRegistrationRequest request) {
                 /* checking if email exist */
-                if (officeRepository.findByEmail(request.getEmail()).isPresent()) {
+                if (officeDao.findByEmail(request.getEmail()).isPresent()) {
                         throw new EmailExistException("this email is already taken");
                 }
 
-                return TRUE;
+                Optional<AssignOffice> assignOffice = assignOfficeDao.selectAssignByProvinceId(request.getProvince());
+
+                if(!assignOffice.isEmpty()){
+                        throw new RuntimeException("Office is already Taken");
+                }
+
+                Province province = provinceDao.selectProvince(request.getProvince())
+                        .orElseThrow(()-> new RuntimeException("province not found"));
+
+                AssignOffice assigningOffice = assignOfficeDao.saveAssign(AssignOffice.builder()
+                        .province(province)
+                        .build());
+
+                Role role = roleDao.findByRoleType(RDRRMC_PROVINCE.name())
+                        .orElseThrow(() -> new RuntimeException("this role type is not found"));
+
+                Personnel personnel = personnelDao.savePersonnel(request.getPersonnel());
+
+                Office office = Office.builder()
+                        .contact(request.getContact())
+                        .email(request.getEmail())
+                        .assignOffice(assigningOffice)
+                        .password(passwordEncoder.encode(request.getPassword()))
+                        .role(role)
+                        .build();
+
+
+
+                Office saved = officeDao.saveOffice(office);
+                OfficePersonnel officePersonnel = officePersonnelDao.saveOfficePersonnel(OfficePersonnel.builder()
+                        .personnel(personnel)
+                        .office(saved)
+                        .build());
 
         }
 
         /**
-         * TODO: check if email exist check and assign office MUNICIPALITY
          *
          * @param request
-         * @return
+         * @return void
          */
         @Override
-        public boolean MunicipalityRegister(MunicipalityRegistrationRequest request) {
+        @Transactional
+        public void MunicipalityRegister(MunicipalityRegistrationRequest request) {
                 /* checking if email exist */
-                if (officeRepository.findByEmail(request.getEmail()).isPresent()) {
+                if (officeDao.findByEmail(request.getEmail()).isPresent()) {
                         throw new EmailExistException("this email is already taken");
                 }
 
                 /*  check and assign office  */
-                AssignOffice assignOffice = assignOfficeDao.selectAssignByMunicipalityId(request.getMunicipality().getMunicipalityId())
-                        .orElseThrow(()-> new RuntimeException("this office is not found"));
+                Optional<AssignOffice> assignOffice = assignOfficeDao.selectAssignByMunicipalityId(request.getMunicipality());
+
+                if(!assignOffice.isEmpty()){
+                        throw new RuntimeException("office is already taken");
+                }
+
+                Municipality municipality  = municipalityDao.selectMunicipality(request.getMunicipality())
+                        .orElseThrow(()-> new RuntimeException("municipality not found"));
+
+
+                AssignOffice assigningOffice = assignOfficeDao.saveAssign(AssignOffice.builder()
+                                .municipality(municipality)
+                                .province(municipality.getProvince())
+                        .build());
+                Personnel personnel = personnelDao.savePersonnel(request.getPersonnel());
 
                 /*  check and assign role  */
                 Role role = roleDao.findByRoleType(RDRRMC_MUNICIPALITY.name())
                         .orElseThrow(() -> new RuntimeException("this role type is not found"));
 
-                Office municipality = Office.builder()
+                System.out.println(assigningOffice.getAssignOfficeId());
+                Office office = Office.builder()
                         .contact(request.getContact())
                         .email(request.getEmail())
-                        .assignOffice(assignOffice)
+                        .assignOffice(assigningOffice)
+                        .password(passwordEncoder.encode(request.getPassword()))
                         .role(role)
                         .build();
-              int saved = officeRepository.saveOffice(municipality);
-                if(saved == 0){
-                        return false;
-                }
 
-                return true;
 
+
+              Office saved = officeDao.saveOffice(office);
+
+                OfficePersonnel officePersonnel = officePersonnelDao.saveOfficePersonnel(OfficePersonnel.builder()
+                        .personnel(personnel)
+                        .office(saved)
+                        .build());
         }
 
 }

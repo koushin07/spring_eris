@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProvinceRegistrationRequest {
 
-    private ProvinceEnum provinceOf;
+    private Long province;
     @Email
     private String email;
     private Personnel personnel;

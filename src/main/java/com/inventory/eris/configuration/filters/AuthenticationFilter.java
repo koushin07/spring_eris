@@ -11,7 +11,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.inventory.eris.Exception.TokenBlacklistedException;
 import com.inventory.eris.Security.JWT.JwtService;
 import com.inventory.eris.Security.JWT.blacklist.BlacklistService;
 
@@ -46,9 +45,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7);
         log.info(jwt);
 
-        if (blacklistService.isAccessTokenBlackListed(jwt)) {
-            throw new TokenBlacklistedException("this is token is black listed");
-        }
+//        if (blacklistService.isAccessTokenBlackListed(jwt)) {
+//            throw new TokenBlacklistedException("this is token is black listed");
+//        }
 
         username = jwtService.extractUsername(jwt);
         log.info("authenticating .....");

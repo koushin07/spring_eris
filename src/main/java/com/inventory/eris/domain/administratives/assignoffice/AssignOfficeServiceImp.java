@@ -1,8 +1,10 @@
 package com.inventory.eris.domain.administratives.assignoffice;
 
+import com.inventory.eris.domain.administratives.province.Province;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -11,19 +13,23 @@ public class AssignOfficeServiceImp implements  AssignOfficeService{
 
     private final AssignOfficeRepository assignOfficeRepository;
     @Override
-    public int saveAssignOffice(AssignOffice assignOffice) {
-        int saved = assignOfficeRepository.saveAssign(assignOffice);
+    public AssignOffice saveAssignOffice(AssignOffice assignOffice) {
+        return assignOfficeRepository.saveAssign(assignOffice);
 
-        return saved;
     }
 
     @Override
     public Optional<AssignOffice> selectAssignOfficeById(Long id) {
-        return assignOfficeRepository.selectAssignByRegionId(id);
+        return assignOfficeRepository.selectAssign(id);
     }
 
     @Override
     public Optional<AssignOffice> selectAssignOfficeByMunicipalityId(Long municipalityId) {
         return assignOfficeRepository.selectAssignByMunicipalityId(municipalityId);
+    }
+
+    @Override
+    public List<Province> selectAssignProvinceAll() {
+        return assignOfficeRepository.selectAssignProvinceAll();
     }
 }

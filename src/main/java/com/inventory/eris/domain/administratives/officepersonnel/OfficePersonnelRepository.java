@@ -2,8 +2,12 @@ package com.inventory.eris.domain.administratives.officepersonnel;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -12,16 +16,22 @@ public class OfficePersonnelRepository implements OfficePersonnelDao{
 
     private final JdbcTemplate jdbcTemplate;
     @Override
-    public int saveOfficePersonnel(OfficePersonnel officePersonnel) {
+    public OfficePersonnel saveOfficePersonnel(OfficePersonnel officePersonnel) {
         var sql = """
                 INSERT INTO office_personnel(office_id, personnel_id, is_active)
                 VALUES(?, ?, ?)
                 """;
-        return jdbcTemplate.update(sql,
-                officePersonnel.getOffice().getOfficeId(),
-                officePersonnel.getPersonnel().getPersonnelId(),
-                officePersonnel.isActive() ? 1 : 0
-                );
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+         jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(sql, new String[]{"office_personnel_id"});
+            ps.setLong(1, officePersonnel.getOffice().getOfficeId());
+            ps.setLong(2,officePersonnel.getPersonnel().getPersonnelId());
+            ps.setInt(3, officePersonnel.isActive() ? 1 : 0);
+        return ps;
+        }, keyHolder);
+         Long id = Objects.requireNonNull(keyHolder.getKey()).longValue();
+         officePersonnel.setOfficePersonnelId(id);
+         return officePersonnel;
     }
 
     @Override

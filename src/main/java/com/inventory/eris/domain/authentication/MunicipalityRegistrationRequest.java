@@ -16,7 +16,7 @@ import lombok.*;
 public class MunicipalityRegistrationRequest {
 
 
-    private Municipality municipality;
+    private Long municipality;
     @Email
     private String email;
     private Personnel personnel;

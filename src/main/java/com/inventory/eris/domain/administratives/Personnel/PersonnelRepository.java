@@ -2,8 +2,12 @@ package com.inventory.eris.domain.administratives.Personnel;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -14,17 +18,24 @@ public class PersonnelRepository implements  PersonnelDao {
 
 
     @Override
-    public int savePersonnel(Personnel personnel) {
+    public Personnel savePersonnel(Personnel personnel) {
         var sql = """
                 INSERT INTO personnel( first_name, last_name, suffix, middle_name)
                 VALUES (?, ?, ?, ?) 
                 """;
-        return jdbcTemplate.update(sql,
-                personnel.getFirstName(),
-                personnel.getLastName(),
-                personnel.getSuffix(),
-                personnel.getMiddleName()
-                );
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(sql, new String[]{"personnel_id"});
+            ps.setString(1, personnel.getFirstName());
+            ps.setString(2, personnel.getLastName());
+            ps.setString(3, personnel.getSuffix());
+            ps.setString(4, personnel.getMiddleName());
+            return  ps;
+        }, keyHolder);
+        Long id = Objects.requireNonNull(keyHolder.getKey()).longValue();
+        personnel.setPersonnelId(id);
+        return personnel;
+
     }
 
     @Override

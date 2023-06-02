@@ -5,18 +5,12 @@ CREATE TABLE roles (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE regions (
-    region_id SERIAL PRIMARY KEY,
-    region_name VARCHAR(225) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
 
 CREATE TABLE provinces (
     province_id SERIAL PRIMARY KEY,
     province_name VARCHAR(225) NOT NULL,
-    region_id BIGINT NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (region_id) REFERENCES regions(region_id)
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+
 );
 
 CREATE TABLE municipalities (
@@ -31,11 +25,9 @@ CREATE TABLE municipalities (
 
 CREATE TABLE assign_offices (
     assign_office_id SERIAL PRIMARY KEY,
-    region_id BIGINT NOT NULL,
     province_id BIGINT NOT NULL,
-    municipality_id BIGINT NOT NULL,
+    municipality_id BIGINT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (region_id) REFERENCES regions(region_id),
     FOREIGN KEY (province_id) REFERENCES provinces(province_id),
     FOREIGN KEY (municipality_id) REFERENCES municipalities(municipality_id)
 );

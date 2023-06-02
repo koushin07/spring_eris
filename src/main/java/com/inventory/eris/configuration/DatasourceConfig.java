@@ -55,6 +55,8 @@ public class DatasourceConfig {
         Flyway flyway = Flyway.configure()
                 .dataSource(dataSource)
                 .locations("classpath:db/migration")
+                .baselineOnMigrate(true)
+                .cleanOnValidationError(true)
                 .load();
         flyway.migrate();
         return flyway;

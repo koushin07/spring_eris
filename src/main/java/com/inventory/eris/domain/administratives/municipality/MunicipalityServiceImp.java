@@ -3,6 +3,7 @@ package com.inventory.eris.domain.administratives.municipality;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,7 +17,23 @@ public class MunicipalityServiceImp implements MunicipalityService{
     }
 
     @Override
-    public Optional<Municipality> selectMunicipality(Long id) {
-        return Optional.ofNullable(municipalityDao.selectMunicipality(id).orElseThrow(() -> new RuntimeException("not found")));
+    public Municipality selectMunicipality(Long id) {
+        return municipalityDao.selectMunicipality(id).orElseThrow(() -> new RuntimeException("not found"));
+    }
+
+    @Override
+    public List<Municipality> selectAllMunicipality() {
+        return municipalityDao.selectAllMunicipality();
+    }
+
+//    ONLY THE NAME SHOULD BE UPDATED
+    @Override
+    public void updateMunicipality(Long id, String rename) {
+        Municipality municipality = municipalityDao.selectMunicipality(id)
+                .orElseThrow(()-> new RuntimeException("municipality not found"));
+
+        municipality.setMunicipalityName(rename);
+
+        municipalityDao.updateMunicipality(id, rename);
     }
 }

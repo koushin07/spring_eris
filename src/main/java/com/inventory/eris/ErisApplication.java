@@ -15,6 +15,6 @@ public class ErisApplication {
 
 	@GetMapping("/testing")
 	public String testing() {
-		return "testss";
+		return "worksssss!!!!!!!!!!";
 	}
 }

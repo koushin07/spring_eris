@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtService {
     private static final String SECRET_KEY = "743777217A25432A462D4A404E635266556A586E3272357538782F413F442847";
 
+    public GrantedAuthority extractRole(String token){
+        Claims claims = extractAllClaims(token);
+        return (GrantedAuthority) claims.get("roles");
+    }
     public String extractUsername(String token) {
 
         String username = extractClaim(token, Claims::getSubject);
@@ -35,7 +40,7 @@ public class JwtService {
 
     public String generateToken(UserDetails userDetails) {
         Claims claims = Jwts.claims();
-        claims.put("roles", userDetails.getAuthorities());
+        claims.put("roles", userDetails.getAuthorities().stream().findFirst().get().toString());
         log.info("generating token................");
         return generateToken(claims, userDetails);
     }

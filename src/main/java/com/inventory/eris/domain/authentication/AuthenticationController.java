@@ -14,6 +14,8 @@ import static org.springframework.http.ResponseEntity.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -31,12 +33,8 @@ public class AuthenticationController {
      */
     @PostMapping("/municipality-registration")
     public ResponseEntity<Void> municipalityRegistration(@RequestBody @Valid MunicipalityRegistrationRequest request ){
-        if(!authenticationService.MunicipalityRegister(request)){
-            return notFound().build();
-        }
-        return ok().build();
-//        return ok(authenticationService.MunicipalityRegister(request));
-
+        authenticationService.MunicipalityRegister(request);
+        return created(URI.create("")).build();
     }
 
     /**
@@ -45,11 +43,9 @@ public class AuthenticationController {
      * @apiNote  Province Registration
      */
     @PostMapping("/province-registration")
-    public ResponseEntity<AuthenticationResponse> provinceRegistration(@RequestBody @Valid ProvinceRegistrationRequest request) {
-        if(!authenticationService.ProvinceRegister(request)){
-            return notFound().build();
-        }
-        return ok().build();
+    public ResponseEntity<Void> provinceRegistration(@RequestBody @Valid ProvinceRegistrationRequest request) {
+
+        return created(URI.create("")).build();
     }
 
 

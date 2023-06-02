@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 
 import com.inventory.eris.domain.administratives.assignoffice.AssignOffice;
+import com.inventory.eris.utils.emailvalidation.UniqueEmail;
+import jakarta.validation.constraints.NotEmpty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,11 +25,11 @@ import lombok.NoArgsConstructor;
 public class Office implements UserDetails {
 
     private Long officeId;
-
+    @UniqueEmail
     private String email;
-
+    @NotEmpty
     private String password;
-
+    @NotEmpty
     private String contact;
 
     private AssignOffice assignOffice;
@@ -38,7 +40,7 @@ public class Office implements UserDetails {
 
     private LocalDateTime updatedAt;
 
-    private LocalDateTime deletedAt;
+//    private LocalDateTime deletedAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -78,8 +80,7 @@ public class Office implements UserDetails {
     public String getPassword() {
         // TODO Auto-generated method stub
         return password;
-        // throw new UnsupportedOperationException("Unimplemented method
-        // 'getPassword'");
+
     }
 
 }

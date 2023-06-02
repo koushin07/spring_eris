@@ -11,7 +11,7 @@ public class RoleRowMapper implements RowMapper<Role> {
     @Override
     @Nullable
     public Role mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new Role(RoleType.valueOf(rs.getString("role_type")));
+        return new Role(rs.getLong("role_id"),RoleType.valueOf(rs.getString("role_type")));
     }
 
 }

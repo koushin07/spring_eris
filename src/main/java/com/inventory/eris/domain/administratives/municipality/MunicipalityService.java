@@ -1,8 +1,13 @@
 package com.inventory.eris.domain.administratives.municipality;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MunicipalityService {
     Municipality saveMunicipality(Municipality municipality);
-    Optional<Municipality> selectMunicipality(Long id);
+    Municipality selectMunicipality(Long id);
+
+    List<Municipality> selectAllMunicipality();
+
+    void updateMunicipality(Long id, String request);
 }

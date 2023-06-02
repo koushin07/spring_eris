@@ -4,6 +4,6 @@ import java.util.Optional;
 
 public interface PersonnelService {
 
-    boolean savePersonnel(Personnel personnel);
+    Personnel savePersonnel(Personnel personnel);
     Personnel selectPersonnelById(Long id);
 }

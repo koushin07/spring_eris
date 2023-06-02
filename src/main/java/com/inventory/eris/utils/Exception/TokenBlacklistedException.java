@@ -1,4 +1,4 @@
-package com.inventory.eris.Exception;
+package com.inventory.eris.utils.Exception;
 
 public class TokenBlacklistedException extends RuntimeException {
     public TokenBlacklistedException() {
