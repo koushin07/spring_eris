@@ -1,5 +1,9 @@
 package com.inventory.eris.domain.authentication;
 
+import com.inventory.eris.domain.authentication.request.AuthenticationRefreshTokenRequest;
+import com.inventory.eris.domain.authentication.request.AuthenticationRequest;
+import com.inventory.eris.domain.authentication.request.MunicipalityRegistrationRequest;
+import com.inventory.eris.domain.authentication.request.ProvinceRegistrationRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,7 +48,7 @@ public class AuthenticationController {
      */
     @PostMapping("/province-registration")
     public ResponseEntity<Void> provinceRegistration(@RequestBody @Valid ProvinceRegistrationRequest request) {
-
+        authenticationService.ProvinceRegister(request);
         return created(URI.create("")).build();
     }
 

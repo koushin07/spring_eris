@@ -1,5 +1,6 @@
 package com.inventory.eris.domain.authentication;
 
+import com.inventory.eris.domain.authentication.request.MunicipalityRegistrationRequest;
 import com.inventory.eris.utils.Exception.EmailExistException;
 import com.inventory.eris.domain.administratives.Personnel.Personnel;
 import com.inventory.eris.domain.administratives.Personnel.PersonnelDao;
@@ -73,7 +74,7 @@ class AuthenticationServiceImpTest {
         when(municipalityDao.selectMunicipality(request.getMunicipality())).thenReturn(Optional.of(municipality));
 
         AssignOffice assigningOffice = new AssignOffice();
-        when(assignOfficeDao.saveAssign(any(AssignOffice.class))).thenReturn(assigningOffice);
+        when(assignOfficeDao.assignMunicipality(any(AssignOffice.class))).thenReturn(assigningOffice);
 
         Personnel personnel = new Personnel();
         when(personnelDao.savePersonnel(any(Personnel.class))).thenReturn(personnel);
@@ -96,7 +97,7 @@ class AuthenticationServiceImpTest {
         verify(officeDao, times(1)).findByEmail(request.getEmail());
         verify(assignOfficeDao, times(1)).selectAssignByMunicipalityId(request.getMunicipality());
         verify(municipalityDao, times(1)).selectMunicipality(request.getMunicipality());
-        verify(assignOfficeDao, times(1)).saveAssign(any(AssignOffice.class));
+        verify(assignOfficeDao, times(1)).assignMunicipality(any(AssignOffice.class));
         verify(personnelDao, times(1)).savePersonnel(any(Personnel.class));
         verify(roleDao, times(1)).findByRoleType(anyString());
         verify(officeDao, times(1)).saveOffice(any(Office.class));

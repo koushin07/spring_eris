@@ -1,4 +1,4 @@
-package com.inventory.eris.domain.administratives.office;
+package com.inventory.eris.domain.administratives.office.response;
 
 import com.inventory.eris.domain.administratives.role.Role;
 

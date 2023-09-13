@@ -7,6 +7,8 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -45,4 +47,32 @@ public class PersonnelRepository implements  PersonnelDao {
                """;
        return jdbcTemplate.query(sql, new PersonnelRowMapper(), id).stream().findFirst();
     }
+
+    @Override
+    public List<Personnel> allPersonnel() {
+        var sql = """
+                SELECT * FROM PERSONNEL
+                """;
+        return jdbcTemplate.query(sql,new PersonnelRowMapper());
+    }
+
+    @Override
+    public void updatePersonnel(Personnel personnel) {
+        var sql = """
+                UPDATE personnel
+                SET 
+                    first_name = ?, last_name = ?, suffix = ?, middle_name = ?, updated_at = ?
+                WHERE personnel_id = ?
+                """;
+        jdbcTemplate.update(sql,
+                personnel.getFirstName(),
+                personnel.getLastName(),
+                personnel.getSuffix(),
+                personnel.getMiddleName(),
+                LocalDateTime.now(),
+                personnel.getPersonnelId()
+        );
+    }
+
+
 }

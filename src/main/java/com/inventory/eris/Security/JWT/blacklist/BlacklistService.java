@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 
-public record BlacklistService(BlacklistDaoImp blacklistDaoImp) {
+public record BlacklistService(BlacklistRepository blacklistDaoImp) {
 
     public Boolean isAccessTokenBlackListed(String accessToken) {
         return blacklistDaoImp.isAccessTokenBlackListed(accessToken);

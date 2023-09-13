@@ -34,9 +34,9 @@ public class ProvinceRepository implements ProvinceDao{
     @Override
     public Optional<Province> selectProvince(Long id) {
         var sql = """
-                SELECT * FROM provinces  WHERE provinces.id = ? 
+                SELECT provinces.province_id, provinces.province_name, provinces.created_at as province_created_at FROM provinces  WHERE provinces.province_id = ? 
                 """;
-        List<Province> first = jdbcTemplate.query(sql, new ProvinceRowMapper(), id);
+        List<Province> first = jdbcTemplate.query(sql, new SelectProvinceRowMapper(), id);
         return converter(first).stream().findFirst();
     }
 

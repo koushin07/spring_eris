@@ -1,21 +1,22 @@
-package com.inventory.eris.domain.authentication;
+package com.inventory.eris.domain.authentication.request;
 
 import com.inventory.eris.domain.administratives.Personnel.Personnel;
+import com.inventory.eris.domain.administratives.municipality.Municipality;
+import com.inventory.eris.domain.administratives.province.Province;
 import com.inventory.eris.domain.administratives.province.ProvinceEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class ProvinceRegistrationRequest {
+@NoArgsConstructor
+public class MunicipalityRegistrationRequest {
 
-    private Long province;
+
+    private Long municipality;
     @Email
     private String email;
     private Personnel personnel;
@@ -29,3 +30,4 @@ public class ProvinceRegistrationRequest {
     private String password_confirmation;
 
 }
+

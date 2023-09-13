@@ -1,4 +1,4 @@
-package com.inventory.eris.domain.authentication;
+package com.inventory.eris.domain.authentication.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;

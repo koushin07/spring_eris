@@ -1,5 +1,9 @@
 package com.inventory.eris.domain.administratives.office;
 
+import com.inventory.eris.domain.administratives.office.request.ChangePasswordRequest;
+import com.inventory.eris.domain.administratives.office.request.UpdateOfficeRequest;
+import com.inventory.eris.domain.administratives.office.response.UpdateOfficeResponse;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -10,7 +14,9 @@ public interface OfficeService {
 
     Optional<Office> selectOffice(Long id);
 
-    Office updateOffice(Long id, Office office);
+    UpdateOfficeResponse updateOffice(Long id, UpdateOfficeRequest office);
 
     void changePassword(ChangePasswordRequest newPassword);
+
+    void reassignMunicipality(Long id, Long municipalityId);
 }

@@ -4,11 +4,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class BlacklistDaoImp implements BlacklistDao {
+public class BlacklistRepository implements BlacklistDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public BlacklistDaoImp(JdbcTemplate jdbcTemplate) {
+    public BlacklistRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -31,7 +31,7 @@ public class BlacklistDaoImp implements BlacklistDao {
     @Override
     public void blackListToken(String accessToken) {
         var sql = """
-                INSERT INTO backlists(access_token) VALUES(?)
+                INSERT INTO blacklists(access_token) VALUES(?)
                 """;
         jdbcTemplate.update(sql, accessToken);
     }

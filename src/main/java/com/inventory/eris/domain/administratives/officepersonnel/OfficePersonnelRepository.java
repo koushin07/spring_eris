@@ -18,18 +18,18 @@ public class OfficePersonnelRepository implements OfficePersonnelDao{
     @Override
     public OfficePersonnel saveOfficePersonnel(OfficePersonnel officePersonnel) {
         var sql = """
-                INSERT INTO office_personnel(office_id, personnel_id, is_active)
-                VALUES(?, ?, ?)
+                INSERT INTO office_personnel(office_id, personnel_id)
+                VALUES(?, ?)
                 """;
         KeyHolder keyHolder = new GeneratedKeyHolder();
          jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement(sql, new String[]{"office_personnel_id"});
             ps.setLong(1, officePersonnel.getOffice().getOfficeId());
             ps.setLong(2,officePersonnel.getPersonnel().getPersonnelId());
-            ps.setInt(3, officePersonnel.isActive() ? 1 : 0);
+
         return ps;
         }, keyHolder);
-         Long id = Objects.requireNonNull(keyHolder.getKey()).longValue();
+         Long id = keyHolder.getKey().longValue();
          officePersonnel.setOfficePersonnelId(id);
          return officePersonnel;
     }
@@ -60,5 +60,13 @@ public class OfficePersonnelRepository implements OfficePersonnelDao{
                 WHERE op.office_personnel_id = ?
                 """;
         return jdbcTemplate.query(sql, new OfficePersonnelRowMapper(), id).stream().findFirst();
+    }
+
+    @Override
+    public void deactivatePersonnel(Long id) {
+        var sql = """
+                UPDATE office_personnel SET is_active = 0 WHERE personnel_id = ?
+                """;
+        jdbcTemplate.update(sql, id);
     }
 }

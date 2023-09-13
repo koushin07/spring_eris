@@ -1,5 +1,10 @@
 package com.inventory.eris.domain.authentication;
 
+import com.inventory.eris.domain.authentication.request.AuthenticationRefreshTokenRequest;
+import com.inventory.eris.domain.authentication.request.AuthenticationRequest;
+import com.inventory.eris.domain.authentication.request.MunicipalityRegistrationRequest;
+import com.inventory.eris.domain.authentication.request.ProvinceRegistrationRequest;
+
 public interface AuthenticationService {
 
 

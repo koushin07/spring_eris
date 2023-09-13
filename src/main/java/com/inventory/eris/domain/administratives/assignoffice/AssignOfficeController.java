@@ -4,9 +4,8 @@ package com.inventory.eris.domain.administratives.assignoffice;
 import com.inventory.eris.domain.administratives.province.Province;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,4 +26,7 @@ public class AssignOfficeController {
 
         return ok(assignOfficeService.selectAssignProvinceAll());
     }
+
+
+
 }

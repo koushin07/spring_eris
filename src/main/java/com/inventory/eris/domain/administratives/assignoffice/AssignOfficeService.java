@@ -13,4 +13,6 @@ public interface AssignOfficeService {
     Optional<AssignOffice> selectAssignOfficeByMunicipalityId(Long municipalityId);
 
     List<Province> selectAssignProvinceAll();
+
+    void reassignMunicipality(Long id, Long municipalityId);
 }

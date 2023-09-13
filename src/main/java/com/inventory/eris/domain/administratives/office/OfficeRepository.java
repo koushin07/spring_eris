@@ -90,4 +90,26 @@ public class OfficeRepository implements OfficeDao {
         return jdbcTemplate.query(sql, new OfficeRowMapper(), email).stream().findFirst();
     }
 
+    @Override
+    public void changePassword(Long id, String password) {
+        var sql = """
+                UPDATE offices
+                SET 
+                   password = ?, updated_at = ?
+                WHERE office_id = ?
+                """;
+        jdbcTemplate.update(sql, password, LocalDateTime.now(), id);
+    }
+
+    @Override
+    public void reassignMunicipality(Long id, Long assignOfficeId) {
+        var sql = """
+                UPDATE offices
+                SET 
+                    assign_office_id = ?, updated_at = ? 
+                WHERE office_id = ?
+                """;
+        jdbcTemplate.update(sql, assignOfficeId, LocalDateTime.now(), id);
+    }
+
 }

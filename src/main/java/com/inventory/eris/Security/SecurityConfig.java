@@ -28,7 +28,11 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**", "/testing", "/actuator", "/api/v1/provinces", "/actuator/**", "/swagger-ui/**",
+                .requestMatchers("/api/v1/auth",
+                        "/api/v1/auth/municipality-registration",
+                        "/api/v1/auth/province-registration",
+                        "/testing", "/actuator", "/api/v1/provinces",
+                        "/actuator/**", "/swagger-ui/**",
                         "/v3/api-docs/**",
                         "/api/v1/assign-offices")
                 .permitAll()

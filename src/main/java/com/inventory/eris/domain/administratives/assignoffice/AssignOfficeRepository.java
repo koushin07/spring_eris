@@ -20,7 +20,7 @@ public class AssignOfficeRepository implements AssignOfficeDao {
 
     private final JdbcTemplate jdbcTemplate;
     @Override
-    public AssignOffice saveAssign(AssignOffice assignOffice) {
+    public AssignOffice assignMunicipality(AssignOffice assignOffice) {
         var sql = """
                 INSERT INTO assign_offices( province_id, municipality_id)
                 VALUES (?, ?)
@@ -29,13 +29,31 @@ public class AssignOfficeRepository implements AssignOfficeDao {
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement(sql, new String[]{"assign_office_id"});
             ps.setLong(1, assignOffice.getProvince().getProvinceId());
-            ps.setLong(2, assignOffice.getMunicipality().getMunicipalityId());
+            ps.setLong(2, assignOffice.getMunicipality().getMunicipalityId()) ;
             return ps;
         }, keyHolder);
 
         Long id = Objects.requireNonNull(keyHolder.getKey()).longValue();
         assignOffice.setAssignOfficeId(id);
       return assignOffice;
+    }
+
+    @Override
+    public AssignOffice assignProvince(AssignOffice assignOffice) {
+        var sql = """
+                INSERT INTO assign_offices(province_id)
+                VALUES(?)
+                """;
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(con ->{
+            PreparedStatement ps = con.prepareStatement(sql, new String[]{"assign_office_id"});
+            ps.setLong(1, assignOffice.getProvince().getProvinceId());
+            return ps;
+        }, keyHolder);
+
+        Long id = Objects.requireNonNull(keyHolder.getKey()).longValue();
+        assignOffice.setAssignOfficeId(id);
+        return assignOffice;
     }
 
     @Override
@@ -100,5 +118,12 @@ public class AssignOfficeRepository implements AssignOfficeDao {
                 SELECT DISTINCT provinces.province_id, provinces.* FROM assign_offices JOIN provinces ON provinces.province_id = assign_offices.province_id
                 """;
         return jdbcTemplate.query(sql, new RegisteredProvinceRowMapper());
+    }
+
+    public void reassignMunicipality(Long id, Long municipalityId) {
+        var sql = """
+                UPDATE assign_offices SET municipality_id = ? WHERE 
+                """;
+
     }
 }

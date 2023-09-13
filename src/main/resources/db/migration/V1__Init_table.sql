@@ -1,3 +1,7 @@
+CREATE TABLE blacklists (
+    access_token VARCHAR(225),
+    refresh_token VARCHAR(225)
+);
 ------------- START OF ADMINISTRATIVE AREA -----------------------
 CREATE TABLE roles (
     role_id SERIAL PRIMARY KEY,
@@ -25,7 +29,7 @@ CREATE TABLE municipalities (
 
 CREATE TABLE assign_offices (
     assign_office_id SERIAL PRIMARY KEY,
-    province_id BIGINT NOT NULL,
+    province_id BIGINT,
     municipality_id BIGINT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (province_id) REFERENCES provinces(province_id),
@@ -61,7 +65,7 @@ CREATE TABLE office_personnel (
     office_personnel_id SERIAL PRIMARY KEY,
     office_id BIGINT NOT NULL,
     personnel_id BIGINT NOT NULL,
-    is_active INT DEFAULT 0,
+    is_active INT DEFAULT 1,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP,

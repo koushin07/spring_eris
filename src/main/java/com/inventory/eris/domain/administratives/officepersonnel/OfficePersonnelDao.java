@@ -6,4 +6,5 @@ public interface OfficePersonnelDao {
     OfficePersonnel saveOfficePersonnel(OfficePersonnel officePersonnel);
 
     Optional<OfficePersonnel> selectOfficePersonnelById(Long id);
+    void deactivatePersonnel(Long id);
 }

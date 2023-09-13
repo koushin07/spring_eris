@@ -14,6 +14,10 @@ import com.inventory.eris.domain.administratives.officepersonnel.OfficePersonnel
 import com.inventory.eris.domain.administratives.province.Province;
 import com.inventory.eris.domain.administratives.province.ProvinceDao;
 import com.inventory.eris.domain.administratives.role.RoleDao;
+import com.inventory.eris.domain.authentication.request.AuthenticationRefreshTokenRequest;
+import com.inventory.eris.domain.authentication.request.AuthenticationRequest;
+import com.inventory.eris.domain.authentication.request.MunicipalityRegistrationRequest;
+import com.inventory.eris.domain.authentication.request.ProvinceRegistrationRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,7 +30,7 @@ import com.inventory.eris.utils.Exception.ResourceNotFoundException;
 import com.inventory.eris.Security.JWT.JwtService;
 import com.inventory.eris.Security.JWT.blacklist.BlacklistService;
 import com.inventory.eris.domain.administratives.office.Office;
-import com.inventory.eris.domain.administratives.office.OfficeResponse;
+import com.inventory.eris.domain.administratives.office.response.OfficeResponse;
 import com.inventory.eris.domain.administratives.role.Role;
 
 import io.jsonwebtoken.JwtException;
@@ -62,9 +66,12 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 log.info("authenticating.........");
                 Office office = officeDao.findByEmail(request.getEmail())
                                 .orElseThrow(() -> new ResourceNotFoundException("username not found"));
-                authenticationManager
-                                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),
-                                                request.getPassword()));
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                request.getEmail(),
+                                request.getPassword()
+                        )
+                );
 
                 log.info("authenticated user " + office.getEmail());
                 OfficeResponse response = OfficeResponse.builder()
@@ -118,6 +125,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
          *
          */
         @Override
+        @Transactional
         public void ProvinceRegister(ProvinceRegistrationRequest request) {
                 /* checking if email exist */
                 if (officeDao.findByEmail(request.getEmail()).isPresent()) {
@@ -127,18 +135,18 @@ public class AuthenticationServiceImp implements AuthenticationService {
                 Optional<AssignOffice> assignOffice = assignOfficeDao.selectAssignByProvinceId(request.getProvince());
 
                 if(!assignOffice.isEmpty()){
-                        throw new RuntimeException("Office is already Taken");
+                        throw new ResourceNotFoundException("Office is already Taken");
                 }
 
                 Province province = provinceDao.selectProvince(request.getProvince())
-                        .orElseThrow(()-> new RuntimeException("province not found"));
+                        .orElseThrow(()-> new ResourceNotFoundException("province not found"));
 
-                AssignOffice assigningOffice = assignOfficeDao.saveAssign(AssignOffice.builder()
+                AssignOffice assigningOffice = assignOfficeDao.assignProvince(AssignOffice.builder()
                         .province(province)
                         .build());
 
                 Role role = roleDao.findByRoleType(RDRRMC_PROVINCE.name())
-                        .orElseThrow(() -> new RuntimeException("this role type is not found"));
+                        .orElseThrow(() -> new ResourceNotFoundException("this role type is not found"));
 
                 Personnel personnel = personnelDao.savePersonnel(request.getPersonnel());
 
@@ -184,7 +192,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
                         .orElseThrow(()-> new RuntimeException("municipality not found"));
 
 
-                AssignOffice assigningOffice = assignOfficeDao.saveAssign(AssignOffice.builder()
+                AssignOffice assigningOffice = assignOfficeDao.assignMunicipality(AssignOffice.builder()
                                 .municipality(municipality)
                                 .province(municipality.getProvince())
                         .build());

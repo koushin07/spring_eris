@@ -17,4 +17,7 @@ public interface OfficeDao {
 
     Optional<Office> findByEmail(String email);
 
+    void changePassword(Long id, String password);
+
+    void reassignMunicipality(Long id, Long municipalityId);
 }

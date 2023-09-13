@@ -1,6 +1,6 @@
 package com.inventory.eris.domain.authentication;
 
-import com.inventory.eris.domain.administratives.office.OfficeResponse;
+import com.inventory.eris.domain.administratives.office.response.OfficeResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.inventory.eris.domain.administratives.assignoffice.AssignOffice;
-import com.inventory.eris.utils.emailvalidation.UniqueEmail;
+import com.inventory.eris.utils.validations.uniqueemail.UniqueEmail;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

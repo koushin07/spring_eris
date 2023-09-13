@@ -1,4 +1,4 @@
-package com.inventory.eris.utils.emailvalidation;
+package com.inventory.eris.utils.validations.uniqueemail;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

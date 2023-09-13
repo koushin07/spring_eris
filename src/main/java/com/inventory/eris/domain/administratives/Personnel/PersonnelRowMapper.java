@@ -22,9 +22,7 @@ public class PersonnelRowMapper implements RowMapper<Personnel> {
                 rs.getTimestamp("updated_at").toLocalDateTime() != null
                         ? rs.getTimestamp("updated_at").toLocalDateTime()
                         : null,
-                rs.getTimestamp("deleted_at").toLocalDateTime() != null
-                        ? rs.getTimestamp("deleted_at").toLocalDateTime()
-                        : null
+                null
         );
     }
 }

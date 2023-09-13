@@ -1,12 +1,9 @@
-package com.inventory.eris.utils.emailvalidation;
+package com.inventory.eris.utils.validations.uniqueemail;
 
-import com.inventory.eris.domain.administratives.office.Office;
 import com.inventory.eris.domain.administratives.office.OfficeDao;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Optional;
 
 
 @RequiredArgsConstructor
@@ -17,6 +14,6 @@ public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, St
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
-        return officeDao.findByEmail(email).isPresent();
+        return officeDao.findByEmail(email).isEmpty();
     }
 }

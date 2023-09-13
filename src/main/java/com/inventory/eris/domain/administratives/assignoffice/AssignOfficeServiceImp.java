@@ -11,25 +11,30 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AssignOfficeServiceImp implements  AssignOfficeService{
 
-    private final AssignOfficeRepository assignOfficeRepository;
+    private final AssignOfficeDao assignOfficeDao;
     @Override
     public AssignOffice saveAssignOffice(AssignOffice assignOffice) {
-        return assignOfficeRepository.saveAssign(assignOffice);
+        return assignOfficeDao.assignMunicipality(assignOffice);
 
     }
 
     @Override
     public Optional<AssignOffice> selectAssignOfficeById(Long id) {
-        return assignOfficeRepository.selectAssign(id);
+        return assignOfficeDao.selectAssign(id);
     }
 
     @Override
     public Optional<AssignOffice> selectAssignOfficeByMunicipalityId(Long municipalityId) {
-        return assignOfficeRepository.selectAssignByMunicipalityId(municipalityId);
+        return assignOfficeDao.selectAssignByMunicipalityId(municipalityId);
     }
 
     @Override
     public List<Province> selectAssignProvinceAll() {
-        return assignOfficeRepository.selectAssignProvinceAll();
+        return assignOfficeDao.selectAssignProvinceAll();
+    }
+
+    @Override
+    public void reassignMunicipality(Long id, Long municipalityId) {
+            assignOfficeDao.reassignMunicipality(id, municipalityId);
     }
 }
